@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Mom!</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #333;
+            text-align: center;
+            overflow: hidden; /* To contain confetti */
+        }
+
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        #wishJarContainer {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 30px;
+    animation: float 3s ease-in-out infinite;
+    margin-top: 40px; /* 👈 Add this line to lower the jar */
+}
+
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        #wishJar {
+            width: 150px;
+            height: 200px;
+            background-color: rgba(200, 230, 255, 0.7); /* Light blue, semi-transparent */
+            border: 5px solid #87CEEB; /* Sky blue border */
+            border-radius: 75px 75px 20px 20px / 100px 100px 20px 20px; /* Jar shape */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px; /* For the emoji inside */
+        }
+
+        #jarLid {
+            width: 120px;
+            height: 30px;
+            background-color: #a0a0a0; /* Grey lid */
+            border: 3px solid #707070;
+            border-radius: 15px 15px 5px 5px / 20px 20px 5px 5px;
+            position: absolute;
+            top: -20px; /* Position above the jar body */
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        
+        #jarLabel {
+            background-color: #fff5e1; /* Cream label */
+            color: #5c3a1a; /* Brown text */
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px dashed #d4a373;
+            font-size: 0.4em; /* Smaller than jar emoji */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+        }
+
+
+        #wishMessage {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            min-height: 100px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: #5c3a1a;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        #wishMessage.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .instruction {
+            font-size: 1em;
+            color: #4a2e11;
+            margin-bottom: 20px;
+        }
+
+        /* Confetti styles */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red; /* Will be overridden by JS */
+            opacity: 0.7;
+            border-radius: 50%; /* Make them round or square as you like */
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Special final message style */
+        #finalMessage {
+            margin-top: 30px;
+            padding: 15px;
+            font-size: 1.1em;
+            color: #c0392b; /* A warm red */
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Happy Birthday ma! I love you!</h1>
+    <p class="instruction">Tap the jar to get a special wish!</p>
+
+    <div id="wishJarContainer">
+        <div id="jarLid"></div>
+        <div id="wishJar">
+            <span id="jarLabel">Wish Jar ✨</span>
+        </div>
+    </div>
+
+    <div id="wishMessage">
+        <p>Your wishes will appear here!</p>
+    </div>
+    
+    <div id="finalMessage"></div>
+
+    <script>
+        const wishJar = document.getElementById('wishJarContainer');
+        const wishMessageDisplay = document.getElementById('wishMessage');
+        const finalMessageDisplay = document.getElementById('finalMessage');
+        const body = document.body;
+        let wishIndex = 0;
+
+        // --- PERSONALISE THESE WISHES! ---
+        const wishes = [
+            "I wish you a happy birthday ma! Thank you po sa pag alaga sa amin ni Anica always, we love you!",
+            "Sana ma-grant po lahat ng wishes ninyo! Because you deserve it ma! Always wishing for your SuySing promotion, hehe",
+            "Thank you for your endless love, support, and wisdom. You're the best!",
+            "Me and Anica will always love you ma, hindi po namin lagi napapakita pero we really love you ma and we appreciate you so much!",
+            "Salamat po sa pagiging ilaw ng tahanan ng pamilya natin. ❤️",
+            "I hope you get to relax after all your work ma! you've earned it!",
+            "To the most amazing Mom, happy birthday! You make the world a brighter place.",
+            "May you always be guided by God, and may you be blessed.",
+            "Thank you po for everything you've done for me ma, I love you!",
+            "May all your dreams and wishes for the coming year come true!"
+            // Add more personal wishes here!
+        ];
+        // --- END OF PERSONALISATION ---
+
+        // Shuffle wishes for a different order each time (optional)
+        // wishes.sort(() => Math.random() - 0.5);
+
+        wishJar.addEventListener('click', () => {
+    if (wishIndex < wishes.length) {
+        const currentWish = wishes[wishIndex];
+        if (typeof currentWish === 'string' && currentWish.trim() !== '') {
+            wishMessageDisplay.classList.remove('show');
+            setTimeout(() => {
+                wishMessageDisplay.innerHTML = `<p>${currentWish}</p>`;
+                wishMessageDisplay.classList.add('show');
+            }, 100);
+            createConfetti();
+            document.getElementById('jarLabel').innerHTML = `Wishes! 💖`;
+        }
+        wishIndex++; // Move this here after showing the wish
+    } else if (wishIndex === wishes.length) {
+        wishMessageDisplay.classList.remove('show');
+        setTimeout(() => {
+            wishMessageDisplay.innerHTML = `<p>That's all the wishes from the jar, but my love for you is endless!</p>`;
+            wishMessageDisplay.classList.add('show');
+        }, 100);
+        finalMessageDisplay.textContent = "I love you more than words can say, Mom! Happy Birthday! 🎉🎂";
+        document.getElementById('jarLabel').innerHTML = `All My Love ❤️`;
+        wishIndex++;
+        for(let i = 0; i < 20; i++) setTimeout(createConfetti, i * 50);
+    } else {
+        wishMessageDisplay.innerHTML = `<p>Hope you loved your wishes! Happy Birthday again! 🥰</p>`;
+        wishMessageDisplay.classList.add('show');
+        createConfetti();
+    }
+
+    wishJar.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+        wishJar.style.transform = 'scale(1)';
+    }, 150);
+});
+
+
+        function createConfetti() {
+            const confettiCount = 20; // Number of confetti pieces per click
+            const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#1abc9c', '#f39c12'];
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.classList.add('confetti');
+                
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                confettiPiece.style.backgroundColor = randomColor;
+                
+                // Position confetti randomly near the top of the screen
+                confettiPiece.style.left = Math.random() * 100 + 'vw';
+                confettiPiece.style.top = -20 + 'px'; // Start slightly above screen
+
+                // Randomize animation duration and delay for a more natural fall
+                confettiPiece.style.animationDuration = (Math.random() * 2 + 2) + 's'; // 2-4 seconds
+                confettiPiece.style.animationDelay = (Math.random() * 0.5) + 's';
+                
+                // Randomize horizontal movement during fall
+                const xDrift = (Math.random() - 0.5) * 200; // -100px to 100px drift
+                confettiPiece.style.setProperty('--x-drift', xDrift + 'px');
+                
+                // Update @keyframes fall to use this if you want side drift
+                // @keyframes fall {
+                //     to {
+                //         transform: translateY(100vh) translateX(var(--x-drift)) rotate(720deg);
+                //         opacity: 0;
+                //     }
+                // }
+                // For simplicity, current fall is just straight down with rotation.
+
+                body.appendChild(confettiPiece);
+
+                // Remove confetti element after animation to prevent clutter
+                setTimeout(() => {
+                    confettiPiece.remove();
+                }, 4000); // A bit longer than max animation duration
+            }
+        }
+        // Initial message
+        wishMessageDisplay.innerHTML = `<p>Tap the jar above to start! 😊</p>`;
+        wishMessageDisplay.classList.add('show');
+
+    </script>
+</body>
+</html>
